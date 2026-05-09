@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joseph YEO — Builder</title>
+<meta name="description" content="I ship AI-powered products simultaneously. ForgeFlow, DevRadar Guard, OriginSeal, ColorFit — follow the build logs.">
+<meta property="og:title" content="Joseph YEO — Builder">
+<meta property="og:description" content="Solo builder shipping multiple AI-powered products. Build logs, real numbers, no hype.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0b;
+    --bg-2: #111113;
+    --bg-3: #18181b;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.13);
+    --text-primary: #f0ede8;
+    --text-secondary: #8a8680;
+    --text-muted: #4a4845;
+    --accent: #c8b89a;
+    --accent-dim: rgba(200,184,154,0.12);
+    --accent-dim-hover: rgba(200,184,154,0.2);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.1);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.1);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.1);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.1);
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px 40px;
+    background: rgba(10,10,11,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    gap: 8px;
+  }
+
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 0.5px solid transparent;
+    letter-spacing: 0.02em;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  nav a:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.04);
+    border-color: var(--border);
+  }
+
+  nav a.nav-github {
+    color: var(--accent);
+    border-color: rgba(200,184,154,0.2);
+    background: var(--accent-dim);
+  }
+
+  nav a.nav-github:hover {
+    background: var(--accent-dim-hover);
+    border-color: rgba(200,184,154,0.35);
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section {
+    padding: 100px 0 60px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  section:last-child { border-bottom: none; }
+
+  /* ── HERO ── */
+  #hero {
+    padding-top: 160px;
+    padding-bottom: 80px;
+  }
+
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+
+  .hero-name span {
+    color: var(--accent);
+  }
+
+  .hero-bio {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    max-width: 520px;
+    margin-bottom: 40px;
+  }
+
+  .hero-photo {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-hover);
+    background: var(--bg-3);
+    margin-bottom: 28px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-photo-placeholder {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-hover);
+    background: var(--bg-3);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 0.5px solid var(--border);
+    color: var(--text-muted);
+    background: var(--bg-2);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* ── PROJECTS ── */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .proj-card {
+    background: var(--bg-2);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.15s, background 0.15s;
+    cursor: default;
+    position: relative;
+  }
+
+  .proj-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-3);
+  }
+
+  .proj-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .proj-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .proj-status {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .status-active { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(74,222,128,0.2); }
+  .status-building { background: var(--amber-dim); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.2); }
+  .status-quiet { background: var(--bg-3); color: var(--text-muted); border: 0.5px solid var(--border); }
+
+  .proj-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .proj-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .proj-stack span {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: var(--bg);
+    color: var(--text-muted);
+    border: 0.5px solid var(--border);
+  }
+
+  /* ── BUILD LOG ── */
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .log-entry {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 24px;
+    padding: 20px 0;
+    border-bottom: 0.5px solid var(--border);
+    position: relative;
+  }
+
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-date {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    padding-top: 2px;
+    letter-spacing: 0.02em;
+  }
+
+  .log-content {}
+
+  .log-tags {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ltag {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ltag-guard { background: var(--blue-dim); color: var(--blue); }
+  .ltag-forge { background: var(--green-dim); color: var(--green); }
+  .ltag-origin { background: var(--amber-dim); color: var(--amber); }
+  .ltag-agentic { background: rgba(200,184,154,0.1); color: var(--accent); }
+  .ltag-meta { background: var(--bg-3); color: var(--text-muted); border: 0.5px solid var(--border); }
+
+  .log-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+
+  .log-body {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ── WRITING ── */
+  .writing-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .writing-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 0.5px solid var(--border);
+    text-decoration: none;
+    gap: 16px;
+    transition: opacity 0.15s;
+  }
+
+  .writing-item:last-child { border-bottom: none; }
+  .writing-item:hover { opacity: 0.75; }
+
+  .writing-left {}
+
+  .writing-meta {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .writing-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .writing-arrow {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+
+  .writing-item:hover .writing-arrow {
+    color: var(--accent);
+  }
+
+  .writing-soon {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 16px 0;
+  }
+
+  /* ── CONNECT ── */
+  .connect-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .connect-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 0.5px solid var(--border);
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .connect-item:last-child { border-bottom: none; }
+  .connect-item:hover { opacity: 0.7; }
+
+  .connect-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .connect-label {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+  }
+
+  .connect-handle {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  .connect-arrow {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px 0 60px;
+    text-align: left;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; gap: 4px; }
+    nav a { padding: 6px 10px; font-size: 11px; }
+    main { padding: 0 20px; }
+    #hero { padding-top: 120px; }
+    .proj-grid { grid-template-columns: 1fr; }
+    .log-entry { grid-template-columns: 1fr; gap: 4px 0; }
+    .log-date { margin-bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO OVERLAY -->
+<div id="pj-intro" style="position:fixed;inset:0;z-index:9999;background:#0a0a0b;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
+  <div id="pj-word" style="font-family:'Syne',sans-serif;font-size:clamp(48px,10vw,96px);font-weight:800;letter-spacing:-0.03em;color:#f0ede8;opacity:0;transform:translateY(14px);transition:opacity 0.6s ease,transform 0.6s ease;text-align:center;pointer-events:none;"></div>
+  <div id="pj-sub" style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.16em;color:#4a4845;text-transform:uppercase;margin-top:18px;opacity:0;transition:opacity 0.4s ease;pointer-events:none;"></div>
+  <div id="pj-skip" style="position:absolute;bottom:32px;font-family:'DM Mono',monospace;font-size:11px;color:#2a2a2a;letter-spacing:0.08em;">tap to skip</div>
+</div>
+
+<nav>
+  <a href="#projects">Projects</a>
+  <a href="#log">Build Log</a>
+  <a href="#writing">Writing</a>
+  <a href="https://github.com/josephyeo" target="_blank" rel="noopener" class="nav-github">GitHub ↗</a>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <!-- 사진을 넣으려면 아래 주석을 해제하고 src 경로를 교체하세요 -->
+    <!--
+    <img src="/your-photo.jpg" alt="Joseph YEO" class="hero-photo">
+    -->
+    <div class="hero-photo-placeholder">photo</div>
+
+    <p class="hero-label">Seoul, Korea · Building in Public</p>
+
+    <h1 class="hero-name">Joseph<br><span>YEO</span></h1>
+
+    <p class="hero-bio">
+      Solo builder. I run multiple AI-powered products in parallel — local AI automation, supply chain security, iOS apps, and something longer-term I'm not talking about yet.<br><br>
+      Most of this started in the last two months. I ship fast, document honestly, and share what actually happens — not the highlight reel.
+    </p>
+
+    <div class="hero-stack">
+      <span class="tag">Claude Code</span>
+      <span class="tag">n8n</span>
+      <span class="tag">PostgreSQL</span>
+      <span class="tag">Vercel</span>
+      <span class="tag">TypeScript</span>
+      <span class="tag">Swift</span>
+      <span class="tag">Local AI</span>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label">Projects</p>
+    <div class="proj-grid">
+
+      <div class="proj-card">
+        <div class="proj-header">
+          <span class="proj-name">ForgeFlow</span>
+          <span class="proj-status status-active">active</span>
+        </div>
+        <p class="proj-desc">Local AI coding agent running on M5 Max. Full agentic loop without cloud inference — planning, coding, and review stay on-device.</p>
+        <div class="proj-stack">
+          <span>Local LLM</span><span>M5 Max</span><span>Agent Loop</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-header">
+          <span class="proj-name">DevRadar Guard</span>
+          <span class="proj-status status-active">alpha</span>
+        </div>
+        <p class="proj-desc">Supply chain security for teams using AI coding agents. Signal collection, dependency exposure matching, and agent policy bundles.</p>
+        <div class="proj-stack">
+          <span>Node.js</span><span>PostgreSQL</span><span>n8n</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-header">
+          <span class="proj-name">OriginSeal</span>
+          <span class="proj-status status-quiet">early</span>
+        </div>
+        <p class="proj-desc">A new project exploring digital trust and provenance. Early stage — more when the time is right.</p>
+        <div class="proj-stack">
+          <span>TBD</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-header">
+          <span class="proj-name">ColorFit</span>
+          <span class="proj-status status-building">building</span>
+        </div>
+        <p class="proj-desc">Personal color analysis iOS app using Vision Framework. On-device AI, no data leaves the phone.</p>
+        <div class="proj-stack">
+          <span>Swift</span><span>Vision</span><span>SwiftUI</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-header">
+          <span class="proj-name">AgenticOS</span>
+          <span class="proj-status status-quiet">long game</span>
+        </div>
+        <p class="proj-desc">Everything I'm building points somewhere. This is where it's pointing. Not ready to say more yet.</p>
+        <div class="proj-stack">
+          <span>···</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BUILD LOG -->
+  <section id="log">
+    <p class="section-label">Build Log</p>
+    <div class="log-list">
+
+      <div class="log-entry">
+        <span class="log-date">2026-05-09</span>
+        <div class="log-content">
+          <div class="log-tags">
+            <span class="ltag ltag-meta">meta</span>
+          </div>
+          <p class="log-title">Strategy pivot — product landing to personal hub</p>
+          <p class="log-body">Switched from DevRadar Guard standalone SaaS landing to Project Joseph as the primary front door. The product is still the product; the person is now the platform.</p>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <span class="log-date">2026-04-06</span>
+        <div class="log-content">
+          <div class="log-tags">
+            <span class="ltag ltag-guard">devradar</span>
+          </div>
+          <p class="log-title">DevRadar Guard Alpha shipped — dogfooding begins</p>
+          <p class="log-body">Signal Engine running. Bundle Compiler generating real CLAUDE.md, .npmrc, and hooks. Applying to my own repos first before any external users.</p>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <span class="log-date">2026-03-31</span>
+        <div class="log-content">
+          <div class="log-tags">
+            <span class="ltag ltag-guard">devradar</span>
+          </div>
+          <p class="log-title">The axios incident — why I started building this</p>
+          <p class="log-body">Malicious code distributed for ~3 hours. Postinstall ran 2 seconds after install. AI agents had been adding packages without review. That was the moment.</p>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <span class="log-date">2026-03-xx</span>
+        <div class="log-content">
+          <div class="log-tags">
+            <span class="ltag ltag-forge">forgeflow</span>
+          </div>
+          <p class="log-title">M5 Max local agent loop — first stable run</p>
+          <p class="log-body">Full agentic loop running locally. Planning, code generation, review. Benchmark numbers coming in a dev.to post soon.</p>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <span class="log-date">2026-xx-xx</span>
+        <div class="log-content">
+          <div class="log-tags">
+            <span class="ltag ltag-agentic">agentic</span>
+          </div>
+          <p class="log-title">Running 6+ projects in parallel with AI agents</p>
+          <p class="log-body">Two months in. The infrastructure is n8n + Claude Code + local AI. The discipline is harder than the tooling.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section id="writing">
+    <p class="section-label">Writing</p>
+    <div class="writing-list">
+
+      <p class="writing-soon">First posts coming soon — ForgeFlow M5 Max benchmark, and what the axios incident actually means for agentic development.</p>
+
+      <!-- 포스트 발행 후 이 템플릿을 사용하세요:
+      <a href="https://dev.to/josephyeo/your-post" target="_blank" rel="noopener" class="writing-item">
+        <div class="writing-left">
+          <p class="writing-meta">dev.to · 2026-05-xx</p>
+          <p class="writing-title">Running a Full Agentic Coding Loop on M5 Max — What Actually Happened</p>
+        </div>
+        <span class="writing-arrow">↗</span>
+      </a>
+      -->
+
+    </div>
+  </section>
+
+  <!-- CONNECT -->
+  <section id="connect">
+    <p class="section-label">Connect</p>
+    <div class="connect-grid">
+
+      <a href="https://x.com/josephyeo" target="_blank" rel="noopener" class="connect-item">
+        <div class="connect-left">
+          <span class="connect-label">X (Twitter)</span>
+          <span class="connect-handle">@josephyeo</span>
+        </div>
+        <span class="connect-arrow">↗</span>
+      </a>
+
+      <a href="https://dev.to/josephyeo" target="_blank" rel="noopener" class="connect-item">
+        <div class="connect-left">
+          <span class="connect-label">dev.to</span>
+          <span class="connect-handle">dev.to/josephyeo</span>
+        </div>
+        <span class="connect-arrow">↗</span>
+      </a>
+
+      <a href="https://github.com/josephyeo" target="_blank" rel="noopener" class="connect-item">
+        <div class="connect-left">
+          <span class="connect-label">GitHub</span>
+          <span class="connect-handle">github.com/josephyeo</span>
+        </div>
+        <span class="connect-arrow">↗</span>
+      </a>
+
+      <a href="mailto:hello@projectjoseph.dev" class="connect-item">
+        <div class="connect-left">
+          <span class="connect-label">Email</span>
+          <span class="connect-handle">hello@projectjoseph.dev</span>
+        </div>
+        <span class="connect-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-note">
+      Joseph YEO · Seoul, Korea<br>
+      Building in public. All logs are real. No highlight reel.
+    </p>
+  </footer>
+
+</main>
+
+
+<script>
+(function() {
+  var steps = [
+    { word: '안녕하세요', sub: 'Korean' },
+    { word: 'Hello', sub: 'English' },
+    { word: 'こんにちは', sub: 'Japanese' },
+    { word: 'Joseph.', sub: 'Seoul · Builder' },
+  ];
+  var overlay = document.getElementById('pj-intro');
+  var wordEl  = document.getElementById('pj-word');
+  var subEl   = document.getElementById('pj-sub');
+  var idx = 0, t = null;
+
+  function show(i) {
+    if (i >= steps.length) { end(); return; }
+    idx = i;
+    wordEl.style.opacity = '0';
+    wordEl.style.transform = 'translateY(14px)';
+    subEl.style.opacity = '0';
+    void wordEl.offsetWidth;
+    wordEl.textContent = steps[i].word;
+    subEl.textContent  = steps[i].sub;
+    requestAnimationFrame(function() {
+      wordEl.style.opacity = '1';
+      wordEl.style.transform = 'translateY(0)';
+      setTimeout(function() { subEl.style.opacity = '1'; }, 180);
+    });
+    var hold = (i === steps.length - 1) ? 1400 : 1000;
+    t = setTimeout(function() { next(); }, hold);
+  }
+
+  function next() {
+    clearTimeout(t);
+    wordEl.style.opacity = '0';
+    wordEl.style.transform = 'translateY(-10px)';
+    subEl.style.opacity = '0';
+    t = setTimeout(function() { show(idx + 1); }, 340);
+  }
+
+  function end() {
+    overlay.style.transition = 'opacity 0.6s ease';
+    overlay.style.opacity = '0';
+    setTimeout(function() { overlay.style.display = 'none'; }, 620);
+  }
+
+  overlay.addEventListener('click', function() {
+    clearTimeout(t);
+    if (idx >= steps.length - 1) { end(); }
+    else { next(); }
+  });
+
+  setTimeout(function() { show(0); }, 200);
+})();
+</script>
+
+</body>
+</html>
